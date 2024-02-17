@@ -1,4 +1,4 @@
-## Sentiment Analysis Script README
+## Post Comment Sentiment Analysis
 
 ### Introduction
 This script performs sentiment analysis on a dataset of comments using Natural Language Processing (NLP) techniques and machine learning algorithms.
