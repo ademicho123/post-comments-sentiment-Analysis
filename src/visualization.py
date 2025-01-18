@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import confusion_matrix
-import shap
+import numpy as np
 
 def plot_confusion_matrix(y_true, y_pred, labels=None):
     """
@@ -15,17 +15,24 @@ def plot_confusion_matrix(y_true, y_pred, labels=None):
     plt.title("Confusion Matrix")
     plt.show()
 
-def visualize_shap(model, X_test, feature_names, save_path=None):
+def plot_feature_importance(model, feature_names, X_test):
     """
-    Compute and visualize SHAP feature importance.
+    Create and save feature importance visualization for IsolationForest
     """
-    explainer = shap.TreeExplainer(model)
-    shap_values = explainer.shap_values(X_test)
-
-    # Summary plot
-    plt.figure()
-    shap.summary_plot(shap_values, X_test, feature_names=feature_names, plot_type="bar", show=False)
-    plt.title("Feature Importance using SHAP")
-    if save_path:
-        plt.savefig(save_path)
-    plt.show()
+    # Get feature importance scores
+    importance_scores = np.abs(model.score_samples(X_test))
+    
+    # Create feature importance DataFrame
+    importance_df = pd.DataFrame({
+        'Feature': feature_names,
+        'Importance': importance_scores.mean(axis=0)
+    })
+    importance_df = importance_df.sort_values('Importance', ascending=False)
+    
+    # Plot
+    plt.figure(figsize=(12, 8))
+    sns.barplot(data=importance_df, x='Importance', y='Feature')
+    plt.title('Feature Importance Plot')
+    plt.tight_layout()
+    plt.savefig('reports/feature_importance.png')
+    plt.close()
